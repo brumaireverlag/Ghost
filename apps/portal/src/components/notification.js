@@ -256,7 +256,35 @@ export default class Notification extends React.Component {
                 active: false
             });
         }
+        document.addEventListener(
+            'externalNotification',
+            this.externalNotificationHandler.bind(this)
+        );
     }
+
+    componentWillUnmount() {
+        document.removeEventListener(
+            'externalNotification',
+            this.externalNotificationHandler,
+            false
+        );
+    }
+
+    externalNotificationHandler({detail}) {
+        if (!detail || this.context.showPopup) {
+            return;
+        }
+        const {status, type, message} = detail;
+
+        this.showNotification({
+            status,
+            type,
+            message,
+            autoHide: true,
+            duration: 3000
+        })
+    }
+
 
     componentDidUpdate() {
         const {notification} = this.context;
