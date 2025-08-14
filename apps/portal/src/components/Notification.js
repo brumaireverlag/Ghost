@@ -25,7 +25,7 @@ const Styles = () => {
     };
 };
 
-const NotificationText = ({type, status, context}) => {
+const NotificationText = ({type, status, context, message}) => {
     const t = context.t;
     const signinPortalLink = getPortalLink({page: 'signin', siteUrl: context.site.url});
     const singupPortalLink = getPortalLink({page: 'signup', siteUrl: context.site.url});
@@ -112,6 +112,12 @@ const NotificationText = ({type, status, context}) => {
                 {t('Thank you for your support!')}
             </p>
         );
+    } else if (message) {
+        return (
+            <p>
+                {message}
+            </p>
+        );
     }
     return (
         <p>
@@ -170,7 +176,7 @@ class NotificationContent extends React.Component {
     }
 
     render() {
-        const {type, status} = this.props;
+        const {type, status, message} = this.props;
         const {className = ''} = this.state;
         const statusClass = status ? `  ${status}` : ' neutral';
         const slideClass = className ? ` ${className}` : '';
@@ -178,7 +184,7 @@ class NotificationContent extends React.Component {
             <div className='gh-portal-notification-wrapper'>
                 <div className={`gh-portal-notification${statusClass}${slideClass}`} onAnimationEnd={e => this.onAnimationEnd(e)}>
                     {(status === 'error' ? <WarningIcon className='gh-portal-notification-icon error' alt=''/> : <CheckmarkIcon className='gh-portal-notification-icon success' alt=''/>)}
-                    <NotificationText type={type} status={status} context={this.context} />
+                    <NotificationText type={type} status={status} context={this.context} message={message} />
                     <CloseIcon className='gh-portal-notification-closeicon' alt='Close' onClick={e => this.onNotificationClose(e)} />
                 </div>
             </div>
@@ -198,18 +204,43 @@ export default class Notification extends React.Component {
             status,
             autoHide,
             duration,
-            className: ''
+            className: '',
+            message: undefined
         };
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('externalNotification', this.externalNotificationHandler, false);
     }
 
     componentDidMount() {
         const {showPopup} = this.context;
+        document.addEventListener('externalNotification', this.externalNotificationHandler.bind(this));
         if (showPopup) {
             // Don't show a notification if there is a popup visible on page load
             this.setState({
                 active: false
             });
         }
+    }
+
+    externalNotificationHandler({detail}) {
+        if (!detail || this.context.showPopup) {
+            return;
+        }
+        /* eslint-disable no-console */
+        console.log('event triggered', detail);
+        const {status, type, message} = detail;
+
+        this.setState({
+            ...this.state,
+            type,
+            status,
+            autoHide: true,
+            duration: 3000,
+            active: true,
+            message
+        });
     }
 
     onHideNotification() {
@@ -243,14 +274,16 @@ export default class Notification extends React.Component {
         const frameStyle = {
             ...Style.frame
         };
+        console.log('render status', this.state);
         if (!this.state.active) {
             return null;
         }
-        const {type, status, autoHide, duration} = this.state;
+        const {type, status, autoHide, duration, message} = this.state;
+
         if (type && status) {
             return (
                 <Frame style={frameStyle} title="portal-notification" head={this.renderFrameStyles()} className='gh-portal-notification-iframe' data-testid="portal-notification-frame" >
-                    <NotificationContent {...{type, status, autoHide, duration}} onHideNotification={e => this.onHideNotification(e)} />
+                    <NotificationContent {...{type, status, message, autoHide, duration}} onHideNotification={e => this.onHideNotification(e)} />
                 </Frame>
             );
         }
