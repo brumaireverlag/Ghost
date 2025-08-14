@@ -436,7 +436,15 @@ function setupGhostApi({siteUrl = window.location.origin, apiUrl, apiKey}) {
         async checkoutPlan({plan, tierId, cadence, cancelUrl, successUrl, email: customerEmail, name, offerId, newsletters, metadata = {}} = {}) {
             const siteUrlObj = new URL(siteUrl);
             const identity = await api.member.identity();
-            const url = endpointFor({type: 'members', resource: 'create-stripe-checkout-session'});
+            let url = endpointFor({type: 'members', resource: 'create-stripe-checkout-session'});
+            if (window.CUSTOM_CHECKOUT_URL) {
+                try {
+                    url = new URL(window.CUSTOM_CHECKOUT_URL);
+                } catch (e) {
+                    /* eslint-disable no-console */
+                    console.error('Invalid custom checkout url. Ignored.', window.CUSTOM_CHECKOUT_URL);
+                }
+            }
 
             if (!cancelUrl) {
                 const checkoutCancelUrl = window.location.href.startsWith(siteUrlObj.href) ? new URL(window.location.href) : new URL(siteUrl);
@@ -544,7 +552,15 @@ function setupGhostApi({siteUrl = window.location.origin, apiUrl, apiKey}) {
         async editBilling({successUrl, cancelUrl, subscriptionId} = {}) {
             const siteUrlObj = new URL(siteUrl);
             const identity = await api.member.identity();
-            const url = endpointFor({type: 'members', resource: 'create-stripe-update-session'});
+            let url = endpointFor({type: 'members', resource: 'create-stripe-update-session'});
+            if (window.CUSTOM_CHECKOUT_UPDATE_URL) {
+                try {
+                    url = new URL(window.CUSTOM_CHECKOUT_UPDATE_URL);
+                } catch (e) {
+                    /* eslint-disable no-console */
+                    console.error('Invalid custom checkout url. Ignored.', window.CUSTOM_CHECKOUT_UPDATE_URL);
+                }
+            }
             if (!successUrl) {
                 const checkoutSuccessUrl = new URL(siteUrl);
                 checkoutSuccessUrl.searchParams.set('stripe', 'billing-update-success');
