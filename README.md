@@ -1,36 +1,11 @@
-&nbsp;
-<p align="center">
-  <a href="https://ghost.org/#gh-light-mode-only" target="_blank">
-    <img src="https://user-images.githubusercontent.com/65487235/157884383-1b75feb1-45d8-4430-b636-3f7e06577347.png" alt="Ghost" width="200px">
-  </a>
-  <a href="https://ghost.org/#gh-dark-mode-only" target="_blank">
-    <img src="https://user-images.githubusercontent.com/65487235/157849205-aa24152c-4610-4d7d-b752-3a8c4f9319e6.png" alt="Ghost" width="200px">
-  </a>
-</p>
-&nbsp;
+## brumaire ghost fork
 
-<p align="center">
-    <a href="https://ghost.org/">Ghost.org</a> •
-    <a href="https://forum.ghost.org">Forum</a> •
-    <a href="https://ghost.org/docs/">Docs</a> •
-    <a href="https://github.com/TryGhost/Ghost/blob/main/.github/CONTRIBUTING.md">Contributing</a> •
-    <a href="https://twitter.com/ghost">Twitter</a>
-    <br /><br />
-    <a href="https://ghost.org/">
-        <img src="https://img.shields.io/badge/downloads-100M+-brightgreen.svg" alt="Downloads" />
-    </a>
-    <a href="https://github.com/TryGhost/Ghost/releases/">
-        <img src="https://img.shields.io/github/release/TryGhost/Ghost.svg" alt="Latest release" />
-    </a>
-    <a href="https://github.com/TryGhost/Ghost/actions">
-        <img src="https://github.com/TryGhost/Ghost/workflows/CI/badge.svg?branch=main" alt="Build status" />
-    </a>
-    <a href="https://github.com/TryGhost/Ghost/contributors/">
-        <img src="https://img.shields.io/github/contributors/TryGhost/Ghost.svg" alt="Contributors" />
-    </a>
-</p>
+this is a fork of the ghost repo with modifications
 
-&nbsp;
+branches:
+- main: the main branch
+- compat: the checkout release of our ghost installations at staging and production
+- modifications: the modifications based of the current compat branch
 
 > [!NOTE]
 > Love open source? We're hiring! Ghost is looking staff engineers to [join the team](https://careers.ghost.org) and work with us full-time
@@ -102,3 +77,8 @@ To stay up to date with all the latest news and product updates, make sure you [
 
 Copyright (c) 2013-2026 Ghost Foundation - Released under the [MIT license](LICENSE).
 Ghost and the Ghost Logo are trademarks of Ghost Foundation Ltd. Please see our [trademark policy](https://ghost.org/trademark/) for info on acceptable usage.
+
+
+# Modifications:
+- some ghost portal member apis are augmented by our own implementation, those augmented routes can be set in `/apps/portal/src/utils/api.js endpointFor()`
+- ghost notification bar: notification sent by custom event are displayed as portal notifications
