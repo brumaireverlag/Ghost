@@ -274,7 +274,6 @@ export default class Notification extends React.Component {
         const frameStyle = {
             ...Style.frame
         };
-        console.log('render status', this.state);
         if (!this.state.active) {
             return null;
         }
