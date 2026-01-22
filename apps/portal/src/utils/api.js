@@ -6,7 +6,18 @@ function setupGhostApi({siteUrl = window.location.origin, apiUrl, apiKey}) {
 
     function endpointFor({type, resource}) {
         if (type === 'members') {
-            return `${siteUrl.replace(/\/$/, '')}/${apiPath}/${resource}/`;
+            const augmented = ['create-stripe-checkout-session', 'subscriptions', 'create-stripe-update-session']
+            let _siteUrl = siteUrl;
+            if (augmented.includes(resource)) {
+                try {
+                    _siteUrl = new URL(window.CGAU);
+                } catch (e) {
+                    /* eslint-disable no-console */
+                    console.error('Invalid custom api url', window.CGAU);
+                }
+            }
+
+            return `${_siteUrl.replace(/\/$/, '')}/${apiPath}/${resource}/`;
         }
     }
 
@@ -492,14 +503,6 @@ function setupGhostApi({siteUrl = window.location.origin, apiUrl, apiKey}) {
             const siteUrlObj = new URL(siteUrl);
             const identity = await api.member.identity();
             let url = endpointFor({type: 'members', resource: 'create-stripe-checkout-session'});
-            if (window.CUSTOM_CHECKOUT_URL) {
-                try {
-                    url = new URL(window.CUSTOM_CHECKOUT_URL);
-                } catch (e) {
-                    /* eslint-disable no-console */
-                    console.error('Invalid custom checkout url. Ignored.', window.CUSTOM_CHECKOUT_URL);
-                }
-            }
 
             if (!cancelUrl) {
                 const checkoutCancelUrl = window.location.href.startsWith(siteUrlObj.href) ? new URL(window.location.href) : new URL(siteUrl);
@@ -662,14 +665,6 @@ function setupGhostApi({siteUrl = window.location.origin, apiUrl, apiKey}) {
             const siteUrlObj = new URL(siteUrl);
             const identity = await api.member.identity();
             let url = endpointFor({type: 'members', resource: 'create-stripe-update-session'});
-            if (window.CUSTOM_CHECKOUT_UPDATE_URL) {
-                try {
-                    url = new URL(window.CUSTOM_CHECKOUT_UPDATE_URL);
-                } catch (e) {
-                    /* eslint-disable no-console */
-                    console.error('Invalid custom checkout url. Ignored.', window.CUSTOM_CHECKOUT_UPDATE_URL);
-                }
-            }
             if (!successUrl) {
                 const checkoutSuccessUrl = new URL(siteUrl);
                 checkoutSuccessUrl.searchParams.set('stripe', 'billing-update-success');
