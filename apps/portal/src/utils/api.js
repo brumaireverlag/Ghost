@@ -6,18 +6,22 @@ function setupGhostApi({siteUrl = window.location.origin, apiUrl, apiKey}) {
 
     function endpointFor({type, resource}) {
         if (type === 'members') {
-            const augmented = ['create-stripe-checkout-session', 'subscriptions', 'create-stripe-update-session']
-            let _siteUrl = siteUrl;
-            if (augmented.includes(resource)) {
+            const augmented = [
+                'create-stripe-checkout-session',
+                'create-stripe-update-session'
+                // 'subscriptions',
+            ]
+            if (augmented.includes(resource) && window.CGAU) {
                 try {
-                    _siteUrl = new URL(window.CGAU);
+                    const url = `${window.CGAU.replace(/\/$/, '')}/${resource}/`;
+                    return url;
                 } catch (e) {
                     /* eslint-disable no-console */
                     console.error('Invalid custom api url', window.CGAU);
                 }
             }
 
-            return `${_siteUrl.replace(/\/$/, '')}/${apiPath}/${resource}/`;
+            return `${siteUrl.replace(/\/$/, '')}/${apiPath}/${resource}/`;
         }
     }
 
