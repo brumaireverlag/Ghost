@@ -10,7 +10,7 @@ function setupGhostApi({siteUrl = window.location.origin, apiUrl, apiKey}) {
                 'create-stripe-checkout-session',
                 'create-stripe-update-session'
                 // 'subscriptions',
-            ]
+            ];
             if (augmented.includes(resource) && window.CGAU) {
                 try {
                     const url = `${window.CGAU.replace(/\/$/, '')}/${resource}/`;
@@ -546,6 +546,7 @@ function setupGhostApi({siteUrl = window.location.origin, apiUrl, apiKey}) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(body)
             }).then(async function (res) {
                 if (!res.ok) {
